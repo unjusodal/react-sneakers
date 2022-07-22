@@ -1,0 +1,41 @@
+.bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-top: 50px;
+    margin-bottom: 20px;
+
+    div {
+        position: relative;
+        
+        input {
+            border: 0.15rem solid #C4C4C4;
+            border-radius: 5px;
+            padding: 8px 30px;
+            outline: none;
+            z-index: 1;
+        }
+    
+        .searchIcon {
+            position: absolute;
+            top: 9px;
+            left: 10px;
+            z-index: 2;
+        }
+    
+        .clearIcon {
+            cursor: pointer;
+            position: absolute;
+            top: 12px;
+            right: 10px;
+            z-index: 2;
+        }
+    }
+
+}
+
+.sneakers {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+}

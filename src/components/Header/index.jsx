@@ -2,7 +2,7 @@ import React from 'react'
 
 import styles from './Header.module.scss'
 
-export default function Header() {
+export default function Header({openDrawer}) {
   return (
     <header className={styles.header}>
         <div className={styles.logoBox}>
@@ -13,7 +13,7 @@ export default function Header() {
             </div>
         </div>
         <div className={styles.menu}>
-            <div>
+            <div onClick={openDrawer}>
                 <img src="/assets/cart-icon.svg" alt="Корзина" />
                 <span>27 990 руб.</span>
             </div>
