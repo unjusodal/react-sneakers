@@ -1,5 +1,7 @@
 import React from 'react';
 
+import axios from 'axios'
+
 import Header from './components/Header'
 import Card from './components/Card'
 import Drawer from './components/Drawer'
@@ -14,16 +16,21 @@ function App() {
 	const [searchValue, setSearchValue] = React.useState('')
 	
 	React.useEffect(() => {
-		fetch('https://62d6d77451e6e8f06f145d02.mockapi.io/sneakers').then((res) => {
-			return res.json()
-		}).then((json) => {
-			setSneakersData(json)
-		})
+		axios.get('https://62d6d77451e6e8f06f145d02.mockapi.io/sneakers')
+		.then(res => setSneakersData(res.data))
+
+		axios.get('https://62d6d77451e6e8f06f145d02.mockapi.io/cart')
+		.then(res => setCartItems(res.data))
 	}, [])
 
-
 	function addToCart(obj) {
+		axios.post('https://62d6d77451e6e8f06f145d02.mockapi.io/cart', obj)
 		setCartItems(prevState => [...prevState, obj])
+	}
+
+	function removeFromCart(id) {
+		axios.delete(`https://62d6d77451e6e8f06f145d02.mockapi.io/cart/${id}`)
+		setCartItems(prevState => prevState.filter(item => item.id !== id))
 	}
 
 	function changeInputValue(e) {
@@ -33,7 +40,7 @@ function App() {
 
 	return (
 		<div className={styles.App}>
-			{isDrawerOpen && <Drawer closeDrawer={() => setIsDrawerOpen(false)} cartItems={cartItems}/>}
+			{isDrawerOpen && <Drawer closeDrawer={() => setIsDrawerOpen(false)} cartItems={cartItems} removeFromCart={removeFromCart}/>}
 			<div className='wrapper'>
 				<Header openDrawer={() => setIsDrawerOpen(true)} />
 				<main>

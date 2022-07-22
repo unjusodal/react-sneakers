@@ -13,14 +13,12 @@
             border-radius: 5px;
             padding: 8px 30px;
             outline: none;
-            z-index: 1;
         }
     
         .searchIcon {
             position: absolute;
             top: 9px;
             left: 10px;
-            z-index: 2;
         }
     
         .clearIcon {
@@ -28,7 +26,6 @@
             position: absolute;
             top: 12px;
             right: 10px;
-            z-index: 2;
         }
     }
 

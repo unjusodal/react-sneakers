@@ -2,7 +2,7 @@ import React from 'react'
 
 import styles from './Drawer.module.scss'
 
-export default function DrawerCard({img, name, price}) {
+export default function DrawerCard({img, name, price, removeFromCart}) {
     return (
         <div className={styles.item}>
             <img className={styles.image} width={70} height={70} src={img} alt="Кроссовки" />
@@ -18,7 +18,7 @@ export default function DrawerCard({img, name, price}) {
             </div>
             <div className={styles.buttonBox}>
                 <button>
-                    <img width={11} height={11} src="/assets/close-icon.svg" alt="Удалить" />
+                    <img onClick={removeFromCart} width={11} height={11} src="/assets/close-icon.svg" alt="Удалить" />
                 </button>
             </div>
         </div> 
