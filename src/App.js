@@ -1,86 +1,82 @@
 import React from 'react';
-
+import { Routes, Route } from 'react-router-dom';
 import axios from 'axios'
-
 import Header from './components/Header'
-import Card from './components/Card'
 import Drawer from './components/Drawer'
+import Home from './pages/Home';
+import Favorites from './pages/Favorites';
 
 import styles from './App.module.scss';
+
+export const AppContext = React.createContext({})
 
 function App() {
 
 	const [sneakersData, setSneakersData] = React.useState([])
-	const [cartItems, setCartItems] = React.useState([])
+	const [cartData, setCartData] = React.useState([])
+	const [favoritesData, setFavoritesData] = React.useState([])
 	const [isDrawerOpen, setIsDrawerOpen] = React.useState(false)
 	const [searchValue, setSearchValue] = React.useState('')
 	
 	React.useEffect(() => {
-		axios.get('https://62d6d77451e6e8f06f145d02.mockapi.io/sneakers')
-		.then(res => setSneakersData(res.data))
+		async function fetchData() {
+			const sneakersData = await axios.get('https://62d6d77451e6e8f06f145d02.mockapi.io/sneakers')
+			const cartData = await axios.get('https://62d6d77451e6e8f06f145d02.mockapi.io/cart')
+			const favoritesData = await axios.get('https://62d6d77451e6e8f06f145d02.mockapi.io/favorites')
 
-		axios.get('https://62d6d77451e6e8f06f145d02.mockapi.io/cart')
-		.then(res => setCartItems(res.data))
+			setSneakersData(sneakersData.data)
+			setCartData(cartData.data)
+			setFavoritesData(favoritesData.data)
+		}
+
+		fetchData()
 	}, [])
 
 	function addToCart(obj) {
-		axios.post('https://62d6d77451e6e8f06f145d02.mockapi.io/cart', obj)
-		setCartItems(prevState => [...prevState, obj])
+		if (cartData.find(item => item.id == obj.id)) {
+			removeFromCart(obj)
+			
+		} else {
+			axios.post('https://62d6d77451e6e8f06f145d02.mockapi.io/cart', obj)
+			setCartData(prevState => [...prevState, obj])
+			console.log(obj)
+		}
+	}
+	function removeFromCart(obj) {
+		axios.delete(`https://62d6d77451e6e8f06f145d02.mockapi.io/cart/${obj.id}`)
+		setCartData(prevState => prevState.filter(item => item.id != obj.id))
 	}
 
-	function removeFromCart(id) {
-		axios.delete(`https://62d6d77451e6e8f06f145d02.mockapi.io/cart/${id}`)
-		setCartItems(prevState => prevState.filter(item => item.id !== id))
+	function addToFavorites(obj) {
+		if (favoritesData.find(item => item.id == obj.id)) {
+			removeFromFavorites(obj)
+			
+		} else {
+			axios.post('https://62d6d77451e6e8f06f145d02.mockapi.io/favorites', obj)
+			setFavoritesData(prevState => [...prevState, obj])
+			console.log(obj)
+		}
 	}
-
-	function changeInputValue(e) {
-		console.log(e.target.value)
-		setSearchValue(e.target.value)
+	function removeFromFavorites(obj) {
+		axios.delete(`https://62d6d77451e6e8f06f145d02.mockapi.io/favorites/${obj.id}`)
+		setFavoritesData(prevState => prevState.filter(item => item.id != obj.id))
 	}
 
 	return (
-		<div className={styles.App}>
-			{isDrawerOpen && <Drawer closeDrawer={() => setIsDrawerOpen(false)} cartItems={cartItems} removeFromCart={removeFromCart}/>}
-			<div className='wrapper'>
-				<Header openDrawer={() => setIsDrawerOpen(true)} />
-				<main>
-					<div className={styles.bar}>
-						<h1>Все кроссовки{searchValue ? `: ${searchValue}` : ''}</h1>
-						<div>
-							<img className={styles.searchIcon} src="/assets/search-icon.svg" alt="Поиск" />
-							{searchValue && (
-								<img 
-									className={styles.clearIcon} 
-									onClick={() => setSearchValue('')} 
-									src="/assets/close-icon.svg" 
-									alt="Очистить" 
-								/>
-							)}
-							<input 
-								type='text' 
-								onChange={changeInputValue} 
-								value={searchValue} 
-								placeholder='Поиск...'
-							/>
-						</div>
-					</div>
-					<div className={styles.sneakers}>
-						{sneakersData.filter(item => item.name.toLowerCase().includes(searchValue))
-						.map((item, index) => {
-							return (
-								<Card 
-									key={index}
-									img={item.img}
-									name={item.name}
-									price={item.price}
-									onPlus={(obj) => addToCart(item)}
-								/>
-							)
-						})}
-					</div>
-				</main>
+		<AppContext.Provider value={{sneakersData, favoritesData, cartData, addToCart, addToFavorites}}>
+			<div className={styles.App}>
+				{isDrawerOpen && <Drawer closeDrawer={() => setIsDrawerOpen(false)} cartData={cartData} removeFromCart={removeFromCart}/>}
+				<div className='wrapper'>
+					<Header openDrawer={() => setIsDrawerOpen(true)} />
+					<main>
+						<Routes>
+							<Route path='/' element={<Home searchValue={searchValue} setSearchValue={setSearchValue}/>} />
+							<Route path='/favorites' element={<Favorites />} />
+						</Routes>
+					</main>
+				</div>
 			</div>
-		</div>
+		</AppContext.Provider>
 	)
 }
 

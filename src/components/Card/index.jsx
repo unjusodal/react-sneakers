@@ -2,19 +2,24 @@ import { useState } from 'react'
 
 import styles from './Card.module.scss'
 
-export default function Card({img, name, price, onPlus}) {
+export default function Card({img, name, price, onPlus, onLike, added, favorited}) {
 
-    const [isChecked, setIsChecked] = useState(false)
-    const [isFavorite, setIsFavorite] = useState(false)
+    const [isAdded, setIsAdded] = useState(added)
+    const [isFavorite, setIsFavorite] = useState(favorited)
 
     function addToCart() {
-        setIsChecked(prevState => !prevState)
+        setIsAdded(prevState => !prevState)
         onPlus()
+    }
+
+    function addToFavorites() {
+        setIsFavorite(prevState => !prevState)
+        onLike()
     }
 
     return (
         <div className={styles.card}>
-            <button className={styles.favorite} onClick={() => setIsFavorite(!isFavorite)}>
+            <button className={styles.favorite} onClick={addToFavorites}>
                 <img src={isFavorite ? "/assets/is-favorite-icon.png" : "/assets/add-favorite-icon.png"} alt="add to favorites" />
             </button>
             <div className={styles.image}>
@@ -32,8 +37,8 @@ export default function Card({img, name, price, onPlus}) {
                         })}
                     </h5>
                 </div>
-                <button className={isChecked ? styles.active : ''} onClick={addToCart}>
-                    <img src={isChecked ? "/assets/check-icon.svg" : "/assets/plus-icon.svg"} alt="add to cart" />
+                <button className={isAdded ? styles.active : ''} onClick={addToCart}>
+                    <img src={isAdded ? "/assets/check-icon.svg" : "/assets/plus-icon.svg"} alt="add to cart" />
                 </button>
             </div>
         </div>
