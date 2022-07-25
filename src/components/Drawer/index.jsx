@@ -1,10 +1,20 @@
 import React from 'react'
-
+import Info from './Info'
+import { AppContext } from '../../App'
 import styles from './Drawer.module.scss'
 
-export default function Drawer({closeDrawer, cartData, removeFromCart}) {
+export default function Drawer({closeDrawer, removeFromCart}) {
 
-    const totalPrice = 0
+    const {cartData, setCartData, totalPrice} = React.useContext(AppContext)
+
+    const [isOrderComplete, setIsOrderComplete] = React.useState(false)
+
+    function handleOrder() {
+        setIsOrderComplete(true)
+        setCartData([])
+    }
+
+    const taxes = (5 * totalPrice) / 100
 
     const totalBlock = () => {
         return (
@@ -49,23 +59,16 @@ export default function Drawer({closeDrawer, cartData, removeFromCart}) {
                         <li>
                             <span>Налог 5%:</span>
                             <div></div>
-                            <b>0 руб.</b>
+                            <b>{taxes.toLocaleString('ru', {
+                                style: 'currency',
+                                currency: 'rub',
+                                minimumFractionDigits: 0
+                            })}</b>
                         </li>
                     </ul>
-                    <button>Оформить заказ</button>
+                    <button onClick={handleOrder}>Оформить заказ</button>
                 </div>
             </>
-        )
-    }
-
-    const emptyCartBlock = () => {
-        return (
-            <div className={styles.emptyCart}>
-                <img width={120} height={120} src="/assets/empty-box.png" alt="" />
-                <h3>Корзина пустая</h3>
-                <p>Добавьте хотя бы одну пару кросовок, чтобы сделать заказ</p>
-                <button onClick={closeDrawer}>Вернуться назад</button>
-            </div>
         )
     }
 
@@ -78,7 +81,14 @@ export default function Drawer({closeDrawer, cartData, removeFromCart}) {
                         <img width={11} height={11} src="/assets/close-icon.svg" alt="Закрыть" />
                     </button>
                 </div>
-                {cartData.length > 0 ? (totalBlock()) : (emptyCartBlock())}
+                {cartData.length > 0 ? (totalBlock()) : (<Info
+                                                            img={isOrderComplete ? '/assets/order-complete.jpg' : '/assets/empty-box.png'}
+                                                            smallImg={false}
+                                                            message={isOrderComplete ? 'Заказ оформлен!' : 'Корзина пустая'}
+                                                            additional={isOrderComplete ? 'Ваш заказ скоро будет передан курьерской доставке' : 'Добавьте хотя бы один товар, чтобы сделать заказ'}
+                                                            closeDrawer={closeDrawer}
+                                                            toHome={false}
+                                                        />)}
             </div>
         </div>
     )

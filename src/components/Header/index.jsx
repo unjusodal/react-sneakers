@@ -1,8 +1,12 @@
 import React from 'react'
 import { Link } from 'react-router-dom'
+import { AppContext } from '../../App'
 import styles from './Header.module.scss'
 
 export default function Header({openDrawer}) {
+
+    const {totalPrice} = React.useContext(AppContext)
+
   return (
     <header className={styles.header}>
         <Link to='/'>
@@ -17,7 +21,13 @@ export default function Header({openDrawer}) {
         <div className={styles.menu}>
             <div onClick={openDrawer}>
                 <img src="/assets/cart-icon.svg" alt="Корзина" />
-                <span>27 990 руб.</span>
+                <span>{
+                    totalPrice.toLocaleString('ru', {
+                            style: 'currency',
+                            currency: 'rub',
+                            minimumFractionDigits: 0
+                    })}
+                </span>
             </div>
             <Link to='/favorites'>
                 <img src="/assets/favorites-icon.svg" alt="Закладки" />

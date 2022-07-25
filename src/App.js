@@ -21,12 +21,8 @@ function App() {
 	React.useEffect(() => {
 		async function fetchData() {
 			const sneakersData = await axios.get('https://62d6d77451e6e8f06f145d02.mockapi.io/sneakers')
-			const cartData = await axios.get('https://62d6d77451e6e8f06f145d02.mockapi.io/cart')
-			const favoritesData = await axios.get('https://62d6d77451e6e8f06f145d02.mockapi.io/favorites')
 
 			setSneakersData(sneakersData.data)
-			setCartData(cartData.data)
-			setFavoritesData(favoritesData.data)
 		}
 
 		fetchData()
@@ -37,13 +33,10 @@ function App() {
 			removeFromCart(obj)
 			
 		} else {
-			axios.post('https://62d6d77451e6e8f06f145d02.mockapi.io/cart', obj)
 			setCartData(prevState => [...prevState, obj])
-			console.log(obj)
 		}
 	}
 	function removeFromCart(obj) {
-		axios.delete(`https://62d6d77451e6e8f06f145d02.mockapi.io/cart/${obj.id}`)
 		setCartData(prevState => prevState.filter(item => item.id != obj.id))
 	}
 
@@ -52,22 +45,21 @@ function App() {
 			removeFromFavorites(obj)
 			
 		} else {
-			axios.post('https://62d6d77451e6e8f06f145d02.mockapi.io/favorites', obj)
 			setFavoritesData(prevState => [...prevState, obj])
-			console.log(obj)
 		}
 	}
 	function removeFromFavorites(obj) {
-		axios.delete(`https://62d6d77451e6e8f06f145d02.mockapi.io/favorites/${obj.id}`)
 		setFavoritesData(prevState => prevState.filter(item => item.id != obj.id))
 	}
 
+	const totalPrice = cartData.reduce((sum, obj) => obj.price + sum, 0)
+
 	return (
-		<AppContext.Provider value={{sneakersData, favoritesData, cartData, addToCart, addToFavorites}}>
+		<AppContext.Provider value={{sneakersData, favoritesData, cartData, setCartData, addToCart, addToFavorites, totalPrice}}>
 			<div className={styles.App}>
-				{isDrawerOpen && <Drawer closeDrawer={() => setIsDrawerOpen(false)} cartData={cartData} removeFromCart={removeFromCart}/>}
+				{isDrawerOpen && <Drawer closeDrawer={() => setIsDrawerOpen(false)} removeFromCart={removeFromCart}/>}
 				<div className='wrapper'>
-					<Header openDrawer={() => setIsDrawerOpen(true)} />
+					<Header openDrawer={() => setIsDrawerOpen(true)}/>
 					<main>
 						<Routes>
 							<Route path='/' element={<Home searchValue={searchValue} setSearchValue={setSearchValue}/>} />
