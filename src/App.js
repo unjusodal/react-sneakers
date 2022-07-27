@@ -52,10 +52,14 @@ function App() {
 		setFavoritesData(prevState => prevState.filter(item => item.id != obj.id))
 	}
 
+	function isItemAdded(id) {
+        return cartData.find(obj => obj.id == id) ? true : false
+    }
+
 	const totalPrice = cartData.reduce((sum, obj) => obj.price + sum, 0)
 
 	return (
-		<AppContext.Provider value={{sneakersData, favoritesData, cartData, setCartData, addToCart, addToFavorites, totalPrice}}>
+		<AppContext.Provider value={{sneakersData, favoritesData, cartData, setCartData, addToCart, addToFavorites, totalPrice, isItemAdded}}>
 			<div className={styles.App}>
 				{isDrawerOpen && <Drawer closeDrawer={() => setIsDrawerOpen(false)} removeFromCart={removeFromCart}/>}
 				<div className='wrapper'>

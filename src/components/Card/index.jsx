@@ -1,14 +1,15 @@
-import { useState } from 'react'
-
+import React from 'react'
+import { AppContext } from '../../App'
 import styles from './Card.module.scss'
 
-export default function Card({img, name, price, onPlus, onLike, added, favorited}) {
+export default function Card({id, img, name, price, onPlus, onLike, added, favorited}) {
 
-    const [isAdded, setIsAdded] = useState(added)
-    const [isFavorite, setIsFavorite] = useState(favorited)
+    const {isItemAdded} = React.useContext(AppContext)
+
+    const [isFavorite, setIsFavorite] = React.useState(favorited)
 
     function addToCart() {
-        setIsAdded(prevState => !prevState)
+        
         onPlus()
     }
 
@@ -16,6 +17,8 @@ export default function Card({img, name, price, onPlus, onLike, added, favorited
         setIsFavorite(prevState => !prevState)
         onLike()
     }
+
+    // console.log(isItemAdded(id))
 
     return (
         <div className={styles.card}>
@@ -37,8 +40,8 @@ export default function Card({img, name, price, onPlus, onLike, added, favorited
                         })}
                     </h5>
                 </div>
-                <button className={isAdded ? styles.active : ''} onClick={addToCart}>
-                    <img src={isAdded ? "/assets/check-icon.svg" : "/assets/plus-icon.svg"} alt="add to cart" />
+                <button className={isItemAdded(id) ? styles.active : ''} onClick={addToCart}>
+                    <img src={isItemAdded(id) ? "/assets/check-icon.svg" : "/assets/plus-icon.svg"} alt="add to cart" />
                 </button>
             </div>
         </div>

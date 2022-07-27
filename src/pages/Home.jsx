@@ -6,7 +6,8 @@ import styles from '../App.module.scss';
 
 export default function Home({searchValue, setSearchValue}) {
 
-    const {sneakersData, cartData, favoritesData, addToCart, addToFavorites} = React.useContext(AppContext)
+    const {sneakersData, cartData, favoritesData, addToCart, addToFavorites, isItemAdded} = React.useContext(AppContext)
+    
 
     return (
         <>
@@ -36,12 +37,12 @@ export default function Home({searchValue, setSearchValue}) {
                     return (
                         <Card 
                             key={item.hash}
+                            id={item.id}
                             img={item.img}
                             name={item.name}
                             price={item.price}
                             onPlus={(obj) => addToCart(item)}
                             onLike={(obj) => addToFavorites(item)}
-                            added={cartData.find(obj => obj.hash == item.hash) ? true : false}
                             favorited={favoritesData.find(obj => obj.hash == item.hash) ? true : false}
                         />
                     )
